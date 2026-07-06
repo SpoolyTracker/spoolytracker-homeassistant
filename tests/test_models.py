@@ -31,6 +31,14 @@ def test_from_api_flattens_nested():
     assert spool.material == "PETG"
     assert spool.color_name == "Noir"
     assert "#7" in spool.label and "Bambu" in spool.label
+    # Le poids restant apparaît dans le libellé quand il est connu.
+    assert "250 g" in spool.label
+
+
+def test_label_without_weight_has_no_gram_suffix():
+    spool = Spool.from_api({"id": 3, "brand": {"name": "Bambu"}})
+    assert spool.label.endswith("Bambu")
+    assert " g" not in spool.label
 
 
 def test_from_api_handles_missing_nested():

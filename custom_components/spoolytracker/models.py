@@ -60,14 +60,21 @@ class Spool:
 
     @property
     def label(self) -> str:
-        """Libellé lisible pour les selects et les logs, ex. « #12 · Bambu PETG Noir »."""
+        """Libellé lisible pour les selects et les logs.
+
+        Ex. « #12 · Bambu PETG Noir · 250 g » (le poids restant est ajouté
+        quand il est connu).
+        """
         parts = [
             p
             for p in (self.brand, self.material, self.color_name or self.color)
             if p
         ]
         detail = " ".join(parts) if parts else (self.spool_reference or "bobine")
-        return f"#{self.id} · {detail}"
+        label = f"#{self.id} · {detail}"
+        if self.weight_remaining is not None:
+            label += f" · {round(self.weight_remaining)} g"
+        return label
 
     @property
     def is_low_stock(self) -> bool:
