@@ -1,0 +1,212 @@
+# Définition UI des services SpoolyTracker (éditeur de services Home Assistant).
+
+log_consumption:
+  name: Enregistrer une consommation
+  description: >-
+    Enregistre une consommation de filament dans SpoolyTracker. Fournissez
+    directement spool_id (fiable) ou laissez l'intégration résoudre la bobine via
+    le mapping de slot, la bobine active sélectionnée, ou les métadonnées.
+  fields:
+    spool_id:
+      name: ID de bobine
+      description: Identifiant SpoolyTracker de la bobine. Optionnel si le matching est actif.
+      required: false
+      example: "123"
+      selector:
+        text:
+    grams_used:
+      name: Grammes consommés
+      description: Quantité de filament consommée, en grammes.
+      required: true
+      example: 42.5
+      selector:
+        number:
+          min: 0
+          max: 10000
+          step: 0.1
+          unit_of_measurement: g
+          mode: box
+    length_used_m:
+      name: Longueur consommée (m)
+      description: Longueur en mètres (informatif — ajouté aux notes).
+      required: false
+      example: 13.2
+      selector:
+        number:
+          min: 0
+          max: 100000
+          step: 0.1
+          unit_of_measurement: m
+          mode: box
+    printer_name:
+      name: Imprimante
+      description: Nom de l'imprimante (utilisé pour le mapping de slot).
+      required: false
+      example: Bambu P1S
+      selector:
+        text:
+    job_name:
+      name: Nom du print
+      description: Nom du travail d'impression (envoyé comme externalJobId).
+      required: false
+      example: Support mural ESP32
+      selector:
+        text:
+    project_id:
+      name: ID de projet
+      description: Identifiant de projet SpoolyTracker (informatif — ajouté aux notes).
+      required: false
+      selector:
+        text:
+    source:
+      name: Source
+      description: Origine de l'enregistrement.
+      required: false
+      default: home_assistant
+      example: home_assistant_bambulab
+      selector:
+        text:
+    metadata:
+      name: Métadonnées
+      description: Objet libre supplémentaire (réservé, ajouté au contexte).
+      required: false
+      selector:
+        object:
+    ams_unit:
+      name: Unité AMS
+      description: Numéro de l'unité AMS (pour le mapping de slot).
+      required: false
+      example: 1
+      selector:
+        number:
+          min: 0
+          max: 16
+          mode: box
+    ams_slot:
+      name: Slot AMS
+      description: Numéro de slot AMS (pour le mapping de slot).
+      required: false
+      example: 3
+      selector:
+        number:
+          min: 0
+          max: 16
+          mode: box
+    external:
+      name: Bobine externe
+      description: La bobine est montée en externe (pas dans l'AMS).
+      required: false
+      selector:
+        boolean:
+    material:
+      name: Matière
+      description: PLA, PETG, TPU, ABS, ASA… (matching par métadonnées).
+      required: false
+      example: PETG
+      selector:
+        text:
+    color:
+      name: Couleur
+      description: Couleur du filament (matching par métadonnées).
+      required: false
+      example: black
+      selector:
+        text:
+    brand:
+      name: Marque
+      description: Marque du filament (matching par métadonnées).
+      required: false
+      example: Bambu
+      selector:
+        text:
+    filament_profile:
+      name: Profil filament
+      description: Nom du profil (ex. « Bambu PETG HF Black ») — matching approché.
+      required: false
+      selector:
+        text:
+    allow_ambiguous_match:
+      name: Autoriser le matching ambigu
+      description: >-
+        Si plusieurs bobines correspondent par métadonnées, enregistrer quand
+        même sur la première. Désactivé par défaut (sécurité).
+      required: false
+      default: false
+      selector:
+        boolean:
+
+set_slot_spool:
+  name: Associer une bobine à un slot
+  description: Associe une bobine SpoolyTracker à un slot imprimante / AMS.
+  fields:
+    printer_name:
+      name: Imprimante
+      required: true
+      example: Bambu P1S
+      selector:
+        text:
+    ams_unit:
+      name: Unité AMS
+      required: false
+      example: 1
+      selector:
+        number:
+          min: 0
+          max: 16
+          mode: box
+    ams_slot:
+      name: Slot AMS
+      required: false
+      example: 3
+      selector:
+        number:
+          min: 0
+          max: 16
+          mode: box
+    external:
+      name: Bobine externe
+      required: false
+      selector:
+        boolean:
+    spool_id:
+      name: ID de bobine
+      required: true
+      example: "123"
+      selector:
+        text:
+
+clear_slot_spool:
+  name: Supprimer l'association d'un slot
+  description: Supprime l'association bobine ↔ slot.
+  fields:
+    printer_name:
+      name: Imprimante
+      required: true
+      example: Bambu P1S
+      selector:
+        text:
+    ams_unit:
+      name: Unité AMS
+      required: false
+      selector:
+        number:
+          min: 0
+          max: 16
+          mode: box
+    ams_slot:
+      name: Slot AMS
+      required: false
+      selector:
+        number:
+          min: 0
+          max: 16
+          mode: box
+    external:
+      name: Bobine externe
+      required: false
+      selector:
+        boolean:
+
+refresh:
+  name: Rafraîchir
+  description: Force la récupération des données depuis SpoolyTracker.

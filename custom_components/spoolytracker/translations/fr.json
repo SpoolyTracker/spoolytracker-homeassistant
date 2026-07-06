@@ -1,0 +1,76 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connecter SpoolyTracker",
+        "description": "Saisissez l'URL de votre instance SpoolyTracker et un token API.",
+        "data": {
+          "base_url": "URL de l'instance",
+          "api_token": "Token API",
+          "name": "Nom (optionnel)"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Ré-authentifier SpoolyTracker",
+        "description": "Le token pour {base_url} n'est plus valide. Saisissez un nouveau token API.",
+        "data": {
+          "api_token": "Token API"
+        }
+      }
+    },
+    "error": {
+      "invalid_url": "URL invalide. Utilisez http(s)://hote[:port].",
+      "invalid_auth": "Le token API a été refusé.",
+      "cannot_connect": "Impossible de joindre l'instance SpoolyTracker.",
+      "unknown": "Erreur inattendue."
+    },
+    "abort": {
+      "already_configured": "Cette instance SpoolyTracker est déjà configurée.",
+      "reauth_successful": "Ré-authentification réussie."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options SpoolyTracker",
+        "data": {
+          "scan_interval": "Intervalle de rafraîchissement (secondes)",
+          "strategy_slot": "Activer le mapping imprimante/slot AMS (S2)",
+          "strategy_select": "Activer les selects de bobine active (S4)",
+          "strategy_metadata": "Activer le matching par métadonnées (S3, fallback)",
+          "allow_ambiguous_match": "Autoriser par défaut le matching ambigu par métadonnées"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "total_spools": { "name": "Bobines au total" },
+      "low_stock_spools": { "name": "Bobines en stock faible" },
+      "total_remaining_weight": { "name": "Poids restant total" },
+      "last_consumption": { "name": "Dernière consommation" },
+      "api_status": { "name": "État de l'API" }
+    },
+    "select": {
+      "active_spool": { "name": "Bobine active" }
+    }
+  },
+  "services": {
+    "log_consumption": {
+      "name": "Enregistrer une consommation",
+      "description": "Enregistre une consommation de filament dans SpoolyTracker."
+    },
+    "set_slot_spool": {
+      "name": "Associer une bobine à un slot",
+      "description": "Associe une bobine SpoolyTracker à un slot imprimante / AMS."
+    },
+    "clear_slot_spool": {
+      "name": "Supprimer l'association d'un slot",
+      "description": "Supprime l'association bobine ↔ slot."
+    },
+    "refresh": {
+      "name": "Rafraîchir",
+      "description": "Force la récupération des données depuis SpoolyTracker."
+    }
+  }
+}

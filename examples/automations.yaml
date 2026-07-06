@@ -1,0 +1,96 @@
+# Exemples d'automatisations SpoolyTracker.
+# ADAPTEZ tous les entity_id à votre installation (les noms Bambu Lab varient).
+
+# ---------------------------------------------------------------------------
+# 1) Le plus fiable : spool_id direct (une bobine fixe par imprimante)
+# ---------------------------------------------------------------------------
+- alias: SpoolyTracker · print terminé (spool_id direct)
+  triggers:
+    - trigger: state
+      entity_id: sensor.bambu_p1s_print_status
+      to: "finish"
+  actions:
+    - action: spoolytracker.log_consumption
+      data:
+        spool_id: "123"
+        grams_used: "{{ states('sensor.bambu_p1s_print_weight') | float(0) }}"
+        printer_name: "Bambu P1S"
+        job_name: "{{ states('sensor.bambu_p1s_current_stage') }}"
+  mode: single
+
+# ---------------------------------------------------------------------------
+# 2) Mapping de slot AMS (S2) — l'automatisation fournit AMS + slot
+# ---------------------------------------------------------------------------
+- alias: SpoolyTracker · print terminé (mapping slot AMS)
+  triggers:
+    - trigger: state
+      entity_id: sensor.bambu_p1s_print_status
+      to: "finish"
+  actions:
+    - action: spoolytracker.log_consumption
+      data:
+        printer_name: "Bambu P1S"
+        ams_unit: 1
+        ams_slot: "{{ states('sensor.bambu_p1s_active_tray') | int(0) }}"
+        grams_used: "{{ states('sensor.bambu_p1s_print_weight') | float(0) }}"
+        job_name: "{{ states('sensor.bambu_p1s_current_stage') }}"
+        material: "{{ states('sensor.bambu_p1s_active_tray_type') }}"
+        color: "{{ states('sensor.bambu_p1s_active_tray_color') }}"
+        source: "home_assistant_bambulab"
+  mode: single
+
+# ---------------------------------------------------------------------------
+# 3) Bobine active via select (S4)
+# ---------------------------------------------------------------------------
+- alias: SpoolyTracker · print terminé (select actif)
+  triggers:
+    - trigger: state
+      entity_id: sensor.generic_printer_status
+      to: "completed"
+  actions:
+    - action: spoolytracker.log_consumption
+      data:
+        printer_name: "Imprimante"
+        grams_used: "{{ states('sensor.generic_printer_filament_used') | float(0) }}"
+  mode: single
+
+# ---------------------------------------------------------------------------
+# 4) Récupérer la réponse du service (response_variable)
+# ---------------------------------------------------------------------------
+- alias: SpoolyTracker · log + confirmation
+  triggers:
+    - trigger: state
+      entity_id: sensor.bambu_p1s_print_status
+      to: "finish"
+  actions:
+    - action: spoolytracker.log_consumption
+      response_variable: result
+      data:
+        printer_name: "Bambu P1S"
+        ams_unit: 1
+        ams_slot: 0
+        grams_used: "{{ states('sensor.bambu_p1s_print_weight') | float(0) }}"
+    - action: persistent_notification.create
+      data:
+        title: "Consommation enregistrée"
+        message: >-
+          {{ result.grams_used }} g sur {{ result.spool_label }}
+          (stratégie : {{ result.strategy }})
+  mode: single
+
+# ---------------------------------------------------------------------------
+# 5) Fallback : notifier quand la bobine n'a pas pu être identifiée (S5)
+# ---------------------------------------------------------------------------
+- alias: SpoolyTracker · consommation non résolue
+  triggers:
+    - trigger: event
+      event_type: spoolytracker_consumption_unresolved
+  actions:
+    - action: notify.mobile_app_mon_telephone
+      data:
+        title: "SpoolyTracker : bobine non identifiée"
+        message: >-
+          {{ trigger.event.data.grams_used }} g non enregistrés
+          ({{ trigger.event.data.status }}).
+          Imprimante : {{ trigger.event.data.printer_name }}.
+  mode: single

@@ -1,0 +1,76 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect SpoolyTracker",
+        "description": "Enter your SpoolyTracker instance URL and an API token.",
+        "data": {
+          "base_url": "Instance URL",
+          "api_token": "API token",
+          "name": "Name (optional)"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Re-authenticate SpoolyTracker",
+        "description": "The token for {base_url} is no longer valid. Enter a new API token.",
+        "data": {
+          "api_token": "API token"
+        }
+      }
+    },
+    "error": {
+      "invalid_url": "The URL is invalid. Use http(s)://host[:port].",
+      "invalid_auth": "The API token was rejected.",
+      "cannot_connect": "Could not reach the SpoolyTracker instance.",
+      "unknown": "Unexpected error."
+    },
+    "abort": {
+      "already_configured": "This SpoolyTracker instance is already configured.",
+      "reauth_successful": "Re-authentication succeeded."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "SpoolyTracker options",
+        "data": {
+          "scan_interval": "Polling interval (seconds)",
+          "strategy_slot": "Enable printer/AMS slot mapping (S2)",
+          "strategy_select": "Enable active-spool selects (S4)",
+          "strategy_metadata": "Enable metadata matching (S3, fallback)",
+          "allow_ambiguous_match": "Allow ambiguous metadata matches by default"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "total_spools": { "name": "Total spools" },
+      "low_stock_spools": { "name": "Low stock spools" },
+      "total_remaining_weight": { "name": "Total remaining weight" },
+      "last_consumption": { "name": "Last consumption" },
+      "api_status": { "name": "API status" }
+    },
+    "select": {
+      "active_spool": { "name": "Active spool" }
+    }
+  },
+  "services": {
+    "log_consumption": {
+      "name": "Log consumption",
+      "description": "Log a filament consumption in SpoolyTracker."
+    },
+    "set_slot_spool": {
+      "name": "Map spool to slot",
+      "description": "Associate a SpoolyTracker spool with a printer/AMS slot."
+    },
+    "clear_slot_spool": {
+      "name": "Clear slot mapping",
+      "description": "Remove a slot's spool association."
+    },
+    "refresh": {
+      "name": "Refresh",
+      "description": "Force a data refresh from SpoolyTracker."
+    }
+  }
+}
