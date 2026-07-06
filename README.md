@@ -17,6 +17,10 @@ N'importe quelle automatisation, script ou intégration peut appeler ses service
 - ✅ 5 stratégies d'identification de la bobine (du plus fiable au plus automatique)
 - ✅ Compatible HACS (dépôt custom)
 
+> 🧪 **Tu veux juste tester ?** Suis le [guide de test pas-à-pas](docs/TEST.md) —
+> il permet d'éprouver toutes les stratégies **sans imprimante**, en appelant les
+> services à la main.
+
 ---
 
 ## Sommaire
