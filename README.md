@@ -56,9 +56,17 @@ N'importe quelle automatisation, script ou intégration peut appeler ses service
 
 **Paramètres → Appareils et services → Ajouter une intégration → SpoolyTracker.**
 
+Première étape, choisissez le **serveur** :
+
+- **Cloud** — le service officiel `https://api.spoolytracker.com` (aucune URL à saisir).
+- **Autre** — une instance **auto-hébergée / tierce** : vous saisissez votre URL
+  personnalisée (sans `/public-api/v1`, ajouté automatiquement).
+
+Puis :
+
 | Champ | Exemple | Notes |
 |---|---|---|
-| URL de l'instance | `https://api.spoolytracker.com` | Sans `/public-api/v1` (ajouté automatiquement). Une URL auto-hébergée fonctionne aussi. |
+| URL de l'instance | `https://spooly.mondomaine.fr` | Uniquement pour « Autre ». |
 | Token API | `sk_...` | Généré dans SpoolyTracker (Paramètres → Clés API). |
 | Nom | `Atelier` | Optionnel. |
 
@@ -312,3 +320,16 @@ Toutes ces URL sont centralisées dans
     logs:
       custom_components.spoolytracker: debug
   ```
+
+---
+
+## Licence
+
+Copyright © 2026 SpoolyTracker.
+
+Distribué sous licence **GNU Affero General Public License v3.0** (AGPL-3.0) —
+voir [`LICENSE`](LICENSE). L'AGPL est le copyleft le plus protecteur : toute
+redistribution **ou mise à disposition via un service réseau** d'une version
+modifiée impose la publication du code source correspondant. « SpoolyTracker »
+et les logos associés restent des marques de leur détenteur et ne sont pas
+couverts par cette licence de code.

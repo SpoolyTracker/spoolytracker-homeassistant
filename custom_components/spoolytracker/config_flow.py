@@ -23,9 +23,11 @@ from .api import (
     SpoolyTrackerConnectionError,
 )
 from .const import (
+    CLOUD_BASE_URL,
     CONF_API_TOKEN,
     CONF_BASE_URL,
     CONF_NAME,
+    CONF_SERVER,
     DEFAULT_ALLOW_AMBIGUOUS,
     DEFAULT_NAME,
     DEFAULT_SCAN_INTERVAL,
@@ -38,6 +40,8 @@ from .const import (
     OPT_STRATEGY_METADATA,
     OPT_STRATEGY_SELECT,
     OPT_STRATEGY_SLOT,
+    SERVER_CLOUD,
+    SERVER_OTHER,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -78,30 +82,56 @@ class SpoolyTrackerConfigFlow(ConfigFlow, domain=DOMAIN):
 
     def __init__(self) -> None:
         self._reauth_entry: ConfigEntry | None = None
+        self._created: ConfigFlowResult | None = None
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
+        """Première étape : choix du serveur (Cloud officiel ou instance tierce)."""
+        return self.async_show_menu(
+            step_id="user",
+            menu_options=[SERVER_CLOUD, SERVER_OTHER],
+        )
+
+    async def async_step_cloud(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Serveur Cloud : URL fixée, on ne demande que le token."""
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            token = user_input[CONF_API_TOKEN].strip()
+            errors = await self._try_create(
+                SERVER_CLOUD, CLOUD_BASE_URL, token, user_input.get(CONF_NAME)
+            )
+            if not errors:
+                return self._created  # type: ignore[return-value]
+
+        schema = vol.Schema(
+            {
+                vol.Required(CONF_API_TOKEN): str,
+                vol.Optional(CONF_NAME, default=DEFAULT_NAME): str,
+            }
+        )
+        return self.async_show_form(
+            step_id="cloud",
+            data_schema=schema,
+            errors=errors,
+            description_placeholders={"base_url": CLOUD_BASE_URL},
+        )
+
+    async def async_step_other(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Serveur tiers/auto-hébergé : URL personnalisée + token."""
         errors: dict[str, str] = {}
         if user_input is not None:
             base_url = _normalize_base_url(user_input[CONF_BASE_URL])
             token = user_input[CONF_API_TOKEN].strip()
-
-            await self.async_set_unique_id(base_url.lower())
-            self._abort_if_unique_id_configured()
-
-            error = await _validate(self.hass, base_url, token)
-            if error:
-                errors["base"] = error
-            else:
-                return self.async_create_entry(
-                    title=user_input.get(CONF_NAME) or DEFAULT_NAME,
-                    data={
-                        CONF_BASE_URL: base_url,
-                        CONF_API_TOKEN: token,
-                        CONF_NAME: user_input.get(CONF_NAME) or DEFAULT_NAME,
-                    },
-                )
+            errors = await self._try_create(
+                SERVER_OTHER, base_url, token, user_input.get(CONF_NAME)
+            )
+            if not errors:
+                return self._created  # type: ignore[return-value]
 
         schema = vol.Schema(
             {
@@ -111,8 +141,30 @@ class SpoolyTrackerConfigFlow(ConfigFlow, domain=DOMAIN):
             }
         )
         return self.async_show_form(
-            step_id="user", data_schema=schema, errors=errors
+            step_id="other", data_schema=schema, errors=errors
         )
+
+    async def _try_create(
+        self, server: str, base_url: str, token: str, name: str | None
+    ) -> dict[str, str]:
+        """Valide puis prépare l'entrée. Renvoie un dict d'erreurs (vide si OK)."""
+        await self.async_set_unique_id(base_url.lower())
+        self._abort_if_unique_id_configured()
+
+        error = await _validate(self.hass, base_url, token)
+        if error:
+            return {"base": error}
+
+        self._created = self.async_create_entry(
+            title=name or DEFAULT_NAME,
+            data={
+                CONF_SERVER: server,
+                CONF_BASE_URL: base_url,
+                CONF_API_TOKEN: token,
+                CONF_NAME: name or DEFAULT_NAME,
+            },
+        )
+        return {}
 
     # -- Réauthentification -----------------------------------------------------
 

@@ -3,7 +3,23 @@
     "step": {
       "user": {
         "title": "Connecter SpoolyTracker",
-        "description": "Saisissez l'URL de votre instance SpoolyTracker et un token API.",
+        "description": "Choisissez le serveur SpoolyTracker à utiliser.",
+        "menu_options": {
+          "cloud": "Cloud (api.spoolytracker.com)",
+          "other": "Autre (auto-hébergé / URL personnalisée)"
+        }
+      },
+      "cloud": {
+        "title": "SpoolyTracker Cloud",
+        "description": "Connexion à {base_url}. Saisissez un token API.",
+        "data": {
+          "api_token": "Token API",
+          "name": "Nom (optionnel)"
+        }
+      },
+      "other": {
+        "title": "Serveur SpoolyTracker personnalisé",
+        "description": "Saisissez l'URL de votre instance et un token API.",
         "data": {
           "base_url": "URL de l'instance",
           "api_token": "Token API",

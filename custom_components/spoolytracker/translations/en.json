@@ -3,7 +3,23 @@
     "step": {
       "user": {
         "title": "Connect SpoolyTracker",
-        "description": "Enter your SpoolyTracker instance URL and an API token.",
+        "description": "Choose the SpoolyTracker server to connect to.",
+        "menu_options": {
+          "cloud": "Cloud (api.spoolytracker.com)",
+          "other": "Other (self-hosted / custom URL)"
+        }
+      },
+      "cloud": {
+        "title": "SpoolyTracker Cloud",
+        "description": "Connecting to {base_url}. Enter an API token.",
+        "data": {
+          "api_token": "API token",
+          "name": "Name (optional)"
+        }
+      },
+      "other": {
+        "title": "Custom SpoolyTracker server",
+        "description": "Enter your instance URL and an API token.",
         "data": {
           "base_url": "Instance URL",
           "api_token": "API token",

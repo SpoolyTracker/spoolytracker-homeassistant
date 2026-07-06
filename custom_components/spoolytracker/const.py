@@ -15,6 +15,9 @@ DOMAIN: Final = "spoolytracker"
 MANUFACTURER: Final = "SpoolyTracker"
 DEFAULT_NAME: Final = "SpoolyTracker"
 
+# URL du service Cloud officiel (option « Cloud » du config flow).
+CLOUD_BASE_URL: Final = "https://api.spoolytracker.com"
+
 # --- Endpoints de l'API publique ----------------------------------------------
 # Base : <base_url>/public-api/v1
 # Auth : header "Authorization: Bearer <token>" (l'API accepte aussi x-api-key).
@@ -34,9 +37,13 @@ EP_ANALYTICS_CONSUMPTION: Final = "/analytics/consumption"  # GET -> agrégats
 EP_PROJECTS: Final = "/projects"  # (non disponible pour l'instant)
 
 # --- Clés de config_entry (data) ----------------------------------------------
+CONF_SERVER: Final = "server"          # "cloud" | "other"
 CONF_BASE_URL: Final = "base_url"
 CONF_API_TOKEN: Final = "api_token"
 CONF_NAME: Final = "name"
+
+SERVER_CLOUD: Final = "cloud"
+SERVER_OTHER: Final = "other"
 
 # --- Clés d'options ------------------------------------------------------------
 OPT_SCAN_INTERVAL: Final = "scan_interval"
